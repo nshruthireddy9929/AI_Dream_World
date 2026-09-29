@@ -1,4 +1,5 @@
 import json
+import ast
 from google import genai
 from google.genai import types
 import streamlit as st
@@ -61,7 +62,12 @@ def render_message(message):
         st.write(message.get("content", ""))
 
     elif message.get("kind") == "image":
-        st.image(message.get("content"))
+        content = message.get("content")
+
+        if isinstance(content, str) and content.startswith("b'"):
+            content = ast.literal_eval(content)
+
+        st.image(content)
 
     else:
         st.write(message.get("content", ""))
